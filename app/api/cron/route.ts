@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   }
 
   const { data: players, error } = await supabaseAdmin.from('players').select('*')
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: 'Failed to load players' }, { status: 500 })
 
   const results = await Promise.allSettled(
     players.map(async (player) => {
