@@ -129,8 +129,8 @@ export default function PlayerPage({ params }: { params: Promise<{ username: str
                       <div key={label} style={{ textAlign: 'center' }}>
                         <div style={{ fontSize: 11, color: 'var(--text-3)', marginBottom: 2 }}>{label}</div>
                         <div style={{ fontSize: 20, fontWeight: 700, fontFamily: 'Cinzel, serif',
-                          color: gain === 'no-data' ? 'var(--text-3)' : gain > 0 ? '#6ab04c' : 'var(--text-2)' }}>
-                          {gain === 'no-data' ? '—' : gain > 0 ? `+${formatXP(gain)}` : '+0'}
+                          color: gain === 'no-data' || gain === null ? 'var(--text-3)' : gain > 0 ? '#6ab04c' : 'var(--text-2)' }}>
+                          {gain === 'no-data' || gain === null ? '—' : gain > 0 ? `+${formatXP(gain)}` : '+0'}
                         </div>
                       </div>
                     ))}
