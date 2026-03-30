@@ -60,6 +60,24 @@ export default function PlayerPage({ params }: { params: Promise<{ username: str
     return overall.experience - prevXp
   }
 
+  function calcCombatLevel() {
+    if (!latest) return null
+    const s = latest.data.data.skills
+    const def = s.defence?.level ?? 1
+    const hp = s.hitpoints?.level ?? 10
+    const prayer = s.prayer?.level ?? 1
+    const attack = s.attack?.level ?? 1
+    const strength = s.strength?.level ?? 1
+    const ranged = s.ranged?.level ?? 1
+    const magic = s.magic?.level ?? 1
+    const base = 0.25 * (def + hp + Math.floor(prayer / 2))
+    const melee = 0.325 * (attack + strength)
+    const rangedContrib = 0.325 * Math.floor(ranged * 1.5)
+    const magicContrib = 0.325 * Math.floor(magic * 1.5)
+    return Math.floor(base + Math.max(melee, rangedContrib, magicContrib))
+  }
+
+  const combatLevel = calcCombatLevel()
   const snapWeek = findSnapshotDaysAgo(7)
   const snapMonth = findSnapshotDaysAgo(30)
   const gainDay = xpGainSince(previous ?? null)
@@ -102,19 +120,39 @@ export default function PlayerPage({ params }: { params: Promise<{ username: str
 
           {overall && (
             <div className="player-header-stats" style={{ display: 'flex', gap: 24, justifyContent: 'flex-end' }}>
-              <div className="player-header-stats-row" style={{ display: 'flex', gap: 24, justifyContent: 'flex-end' }}>
-                {[
-                  { label: 'Total Level', value: overall.level.toLocaleString(), color: 'var(--gold-light)' },
-                  { label: 'Total EXP', value: formatXP(overall.experience), color: 'var(--gold-light)' },
-                  { label: 'Rank', value: overall.rank > 0 ? formatNumber(overall.rank) : '—', color: 'var(--text-2)' },
-                  ...(totalBossKills > 0 ? [{ label: 'Boss KC', value: formatNumber(totalBossKills), color: 'var(--text-2)' }] : []),
-                  ...(totalClues > 0 ? [{ label: 'Clues', value: formatNumber(totalClues), color: 'var(--text-2)' }] : []),
-                ].map((stat, i) => (
-                  <div key={i} style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 11, color: 'var(--text-3)', marginBottom: 2 }}>{stat.label}</div>
-                    <div style={{ fontSize: 20, fontWeight: 700, color: stat.color, fontFamily: 'Cinzel, serif' }}>{stat.value}</div>
+              {/* Primary stats row */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div className="player-header-stats-row" style={{ display: 'flex', gap: 24 }}>
+                  {[
+                    ...(combatLevel !== null ? [{ label: 'Combat', value: combatLevel.toString(), color: 'var(--gold-light)' }] : []),
+                    { label: 'Total Level', value: overall.level.toLocaleString(), color: 'var(--gold-light)' },
+                    { label: 'Total EXP', value: formatXP(overall.experience), color: 'var(--gold-light)' },
+                    { label: 'Rank', value: overall.rank > 0 ? formatNumber(overall.rank) : '—', color: 'var(--text-2)' },
+                  ].map((stat, i) => (
+                    <div key={i} style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: 11, color: 'var(--text-3)', marginBottom: 2 }}>{stat.label}</div>
+                      <div style={{ fontSize: 20, fontWeight: 700, color: stat.color, fontFamily: 'Cinzel, serif' }}>{stat.value}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Secondary stats row (Boss KC + Clues) */}
+                {(totalBossKills > 0 || totalClues > 0) && (
+                  <div style={{ display: 'flex', gap: 24 }}>
+                    {totalBossKills > 0 && (
+                      <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: 11, color: 'var(--text-3)', marginBottom: 2 }}>Boss KC</div>
+                        <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-2)', fontFamily: 'Cinzel, serif' }}>{formatNumber(totalBossKills)}</div>
+                      </div>
+                    )}
+                    {totalClues > 0 && (
+                      <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: 11, color: 'var(--text-3)', marginBottom: 2 }}>Clues</div>
+                        <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-2)', fontFamily: 'Cinzel, serif' }}>{formatNumber(totalClues)}</div>
+                      </div>
+                    )}
                   </div>
-                ))}
+                )}
               </div>
 
               <div className="player-header-divider" style={{ width: 1, background: 'var(--border)', alignSelf: 'stretch' }} />

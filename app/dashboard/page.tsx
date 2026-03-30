@@ -68,6 +68,24 @@ export default function DashboardPage() {
     router.push('/')
   }
 
+  function calcCombatLevel(snap: PlayerWithSnapshot['snapshots'][0] | null) {
+    if (!snap) return null
+    const s = snap.data?.data?.skills
+    if (!s) return null
+    const def = s.defence?.level ?? 1
+    const hp = s.hitpoints?.level ?? 10
+    const prayer = s.prayer?.level ?? 1
+    const attack = s.attack?.level ?? 1
+    const strength = s.strength?.level ?? 1
+    const ranged = s.ranged?.level ?? 1
+    const magic = s.magic?.level ?? 1
+    const base = 0.25 * (def + hp + Math.floor(prayer / 2))
+    const melee = 0.325 * (attack + strength)
+    const rangedContrib = 0.325 * Math.floor(ranged * 1.5)
+    const magicContrib = 0.325 * Math.floor(magic * 1.5)
+    return Math.floor(base + Math.max(melee, rangedContrib, magicContrib))
+  }
+
   function getSortedSnapshots(player: PlayerWithSnapshot) {
     return [...(player.snapshots ?? [])].sort((a, b) =>
       new Date(b.taken_at).getTime() - new Date(a.taken_at).getTime()
@@ -152,7 +170,7 @@ export default function DashboardPage() {
               <table className="osrs-table">
                 <thead>
                   <tr>
-                    <th colSpan={3} />
+                    <th colSpan={4} />
                     <th colSpan={3} style={{ textAlign: 'center', borderBottom: '1px solid var(--gold-dim)', color: 'var(--gold-dim)', paddingBottom: 2, fontSize: 9 }}>
                       EXP Gained
                     </th>
@@ -160,6 +178,7 @@ export default function DashboardPage() {
                   </tr>
                   <tr>
                     <th>Player</th>
+                    <th className="num" style={{ whiteSpace: 'nowrap' }}>Combat</th>
                     <th className="num" style={{ whiteSpace: 'nowrap' }}>Level</th>
                     <th className="num" style={{ whiteSpace: 'nowrap' }}>Total EXP</th>
                     <th className="num" style={{ whiteSpace: 'nowrap' }}>24h</th>
@@ -180,6 +199,7 @@ export default function DashboardPage() {
                             {player.display_name || player.username}
                           </Link>
                         </td>
+                        <td className="num">{calcCombatLevel(snap) ?? '—'}</td>
                         <td className="num">{overall ? overall.level.toLocaleString() : '—'}</td>
                         <td className="num">{overall ? formatXP(overall.experience) : '—'}</td>
                         <td className="num">{renderGain(xpGainSince(sorted, 1))}</td>
@@ -209,6 +229,10 @@ export default function DashboardPage() {
                       <button className="player-card-remove" onClick={() => removePlayer(player.id)} title="Remove">×</button>
                     </div>
                     <div className="player-card-stats">
+                      <div className="player-card-stat">
+                        <span className="player-card-stat-label">Combat</span>
+                        <span className="player-card-stat-value">{calcCombatLevel(sorted[0] ?? null) ?? '—'}</span>
+                      </div>
                       <div className="player-card-stat">
                         <span className="player-card-stat-label">Level</span>
                         <span className="player-card-stat-value">{overall ? overall.level.toLocaleString() : '—'}</span>
