@@ -11,7 +11,7 @@ interface Props {
   snapshots: Snapshot[]
 }
 
-const MILESTONE_THRESHOLD = 50_000 // highlight border when within 50k XP of next level
+const MILESTONE_PCT = 0.9 // highlight when >= 90% to next level
 
 export default function SkillsTab({ latest, previous, snapshots }: Props) {
   const [selectedSkill, setSelectedSkill] = useState<string>('overall')
@@ -51,8 +51,9 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
           const isSelected = selectedSkill === skill
           const heat = gain / maxGain
           const { virtualLevel, progressPct, xpToNext } = getLevelProgress(s.experience)
-          const isMilestone = xpToNext !== null && xpToNext <= MILESTONE_THRESHOLD
+          const isMilestone = progressPct >= MILESTONE_PCT
           const isMaxed = virtualLevel >= 99
+          const showXpToLevel = xpToNext !== null && virtualLevel < 126
 
           // Heatmap: warm gold tint scaled by relative gain
           const heatBg = heat > 0
@@ -109,9 +110,9 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
                 <span style={{ fontSize: 10, color: '#6ab04c' }}>+{formatXP(gain)} exp</span>
               )}
 
-              {xpToNext !== null && (
-                <span style={{ fontSize: 10, color: isMilestone ? 'var(--gold)' : 'var(--text-3)' }}>
-                  {formatXP(xpToNext)} to level
+              {showXpToLevel && (
+                <span style={{ fontSize: 10, fontWeight: isMilestone ? 700 : 400, color: isMilestone ? 'var(--gold)' : 'var(--text-3)' }}>
+                  {formatXP(xpToNext!)} to level
                 </span>
               )}
 
