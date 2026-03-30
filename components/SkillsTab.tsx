@@ -15,6 +15,7 @@ const MILESTONE_PCT = 0.9 // highlight when >= 90% to next level
 
 export default function SkillsTab({ latest, previous, snapshots }: Props) {
   const [selectedSkill, setSelectedSkill] = useState<string>('overall')
+  const [showVirtual, setShowVirtual] = useState(false)
   const skills = latest.data.data.skills
 
   // Calculate max gain across all skills for heatmap normalization
@@ -32,6 +33,18 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
           <span style={{ fontSize: 13, color: 'var(--gold)', fontFamily: 'Cinzel, serif', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             {skillLabel(selectedSkill)} — EXP Over Time
           </span>
+          <button
+            onClick={() => setShowVirtual(v => !v)}
+            style={{
+              fontSize: 11, padding: '4px 10px',
+              background: showVirtual ? 'var(--surface3)' : 'transparent',
+              border: `1px solid ${showVirtual ? 'var(--gold-dim)' : 'var(--border)'}`,
+              borderRadius: 4, color: showVirtual ? 'var(--gold)' : 'var(--text-3)',
+              cursor: 'pointer', whiteSpace: 'nowrap',
+            }}
+          >
+            Virtual levels
+          </button>
         </div>
         <XPChart snapshots={snapshots} skill={selectedSkill} />
       </div>
@@ -53,7 +66,7 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
           const { virtualLevel, progressPct, xpToNext } = getLevelProgress(s.experience)
           const isMilestone = progressPct >= MILESTONE_PCT
           const isMaxed = virtualLevel >= 99
-          const showXpToLevel = xpToNext !== null && virtualLevel < 126
+          const showXpToLevel = xpToNext !== null && (virtualLevel < 99 || showVirtual)
 
           // Heatmap: warm gold tint scaled by relative gain
           const heatBg = heat > 0
@@ -95,7 +108,7 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                 <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--gold-light)', fontVariantNumeric: 'tabular-nums' }}>
                   {isMaxed ? 99 : virtualLevel}
-                  {virtualLevel > 99 && (
+                  {showVirtual && virtualLevel > 99 && (
                     <span style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-3)', marginLeft: 3 }}>
                       ({virtualLevel})
                     </span>
@@ -111,7 +124,7 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
               )}
 
               {showXpToLevel && (
-                <span style={{ fontSize: 10, fontWeight: isMilestone ? 700 : 400, color: isMilestone ? 'var(--gold)' : 'var(--text-3)' }}>
+                <span style={{ fontSize: 10, color: isMilestone ? 'var(--gold)' : 'var(--text-3)' }}>
                   {formatXP(xpToNext!)} to level
                 </span>
               )}
