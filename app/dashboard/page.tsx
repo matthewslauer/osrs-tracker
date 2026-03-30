@@ -146,59 +146,91 @@ export default function DashboardPage() {
             <div style={{ padding: 32, textAlign: 'center', color: 'var(--text-3)', fontSize: 13 }}>
               No players tracked yet. Add one above.
             </div>
-          ) : (
-            <table className="osrs-table">
-              <thead>
-                <tr>
-                  <th colSpan={3} />
-                  <th colSpan={3} style={{ textAlign: 'center', borderBottom: '1px solid var(--gold-dim)', color: 'var(--gold-dim)', paddingBottom: 2, fontSize: 9 }}>
-                    EXP Gained
-                  </th>
-                  <th />
-                </tr>
-                <tr>
-                  <th>Player</th>
-                  <th className="num" style={{ whiteSpace: 'nowrap' }}>Level</th>
-                  <th className="num" style={{ whiteSpace: 'nowrap' }}>Total EXP</th>
-                  <th className="num" style={{ whiteSpace: 'nowrap' }}>24h</th>
-                  <th className="num" style={{ whiteSpace: 'nowrap' }}>7d</th>
-                  <th className="num" style={{ whiteSpace: 'nowrap' }}>30d</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {players.map(player => {
-                  const sorted = getSortedSnapshots(player)
-                  const snap = sorted[0] ?? null
-                  const overall = snap?.data?.data?.skills?.overall
-                  return (
-                    <tr key={player.id}>
-                      <td>
-                        <Link
-                          href={`/player/${player.username}`}
-                          style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 500 }}
-                        >
-                          {player.display_name || player.username}
-                        </Link>
-                      </td>
-                      <td className="num">
-                        {overall ? overall.level.toLocaleString() : '—'}
-                      </td>
-                      <td className="num">
-                        {overall ? formatXP(overall.experience) : '—'}
-                      </td>
-                      <td className="num">{renderGain(xpGainSince(sorted, 1))}</td>
-                      <td className="num">{renderGain(xpGainSince(sorted, 7))}</td>
-                      <td className="num">{renderGain(xpGainSince(sorted, 30))}</td>
-                      <td style={{ textAlign: 'right' }}>
-                        <button className="btn-danger" onClick={() => removePlayer(player.id)}>Remove</button>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          )}
+          ) : (<>
+            {/* Desktop table */}
+            <div className="player-table-wrap table-scroll">
+              <table className="osrs-table">
+                <thead>
+                  <tr>
+                    <th colSpan={3} />
+                    <th colSpan={3} style={{ textAlign: 'center', borderBottom: '1px solid var(--gold-dim)', color: 'var(--gold-dim)', paddingBottom: 2, fontSize: 9 }}>
+                      EXP Gained
+                    </th>
+                    <th />
+                  </tr>
+                  <tr>
+                    <th>Player</th>
+                    <th className="num" style={{ whiteSpace: 'nowrap' }}>Level</th>
+                    <th className="num" style={{ whiteSpace: 'nowrap' }}>Total EXP</th>
+                    <th className="num" style={{ whiteSpace: 'nowrap' }}>24h</th>
+                    <th className="num" style={{ whiteSpace: 'nowrap' }}>7d</th>
+                    <th className="num" style={{ whiteSpace: 'nowrap' }}>30d</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {players.map(player => {
+                    const sorted = getSortedSnapshots(player)
+                    const snap = sorted[0] ?? null
+                    const overall = snap?.data?.data?.skills?.overall
+                    return (
+                      <tr key={player.id}>
+                        <td>
+                          <Link href={`/player/${player.username}`} style={{ color: 'var(--gold)', textDecoration: 'none', fontWeight: 500 }}>
+                            {player.display_name || player.username}
+                          </Link>
+                        </td>
+                        <td className="num">{overall ? overall.level.toLocaleString() : '—'}</td>
+                        <td className="num">{overall ? formatXP(overall.experience) : '—'}</td>
+                        <td className="num">{renderGain(xpGainSince(sorted, 1))}</td>
+                        <td className="num">{renderGain(xpGainSince(sorted, 7))}</td>
+                        <td className="num">{renderGain(xpGainSince(sorted, 30))}</td>
+                        <td style={{ textAlign: 'right' }}>
+                          <button className="btn-danger" onClick={() => removePlayer(player.id)}>Remove</button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile cards */}
+            <div className="player-cards">
+              {players.map(player => {
+                const sorted = getSortedSnapshots(player)
+                const overall = sorted[0]?.data?.data?.skills?.overall
+                return (
+                  <div key={player.id} className="player-card">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Link href={`/player/${player.username}`} className="player-card-name">
+                        {player.display_name || player.username}
+                      </Link>
+                      <button className="btn-danger player-card-remove" onClick={() => removePlayer(player.id)}>Remove</button>
+                    </div>
+                    <div className="player-card-stats">
+                      <div className="player-card-stat">
+                        <span className="player-card-stat-label">Level</span>
+                        <span className="player-card-stat-value">{overall ? overall.level.toLocaleString() : '—'}</span>
+                      </div>
+                      <div className="player-card-stat">
+                        <span className="player-card-stat-label">Total EXP</span>
+                        <span className="player-card-stat-value">{overall ? formatXP(overall.experience) : '—'}</span>
+                      </div>
+                    </div>
+                    <div className="player-card-gains">
+                      {[{ label: '24h', days: 1 }, { label: '7d', days: 7 }, { label: '30d', days: 30 }].map(({ label, days }) => (
+                        <div key={label} className="player-card-gain">
+                          <span className="player-card-gain-label">{label}</span>
+                          <span className="player-card-gain-value">{renderGain(xpGainSince(sorted, days))}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </>)}
         </div>
 
         <p style={{ marginTop: 12, fontSize: 11, color: 'var(--text-3)', textAlign: 'center' }}>

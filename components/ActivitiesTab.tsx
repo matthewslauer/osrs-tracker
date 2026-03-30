@@ -63,7 +63,7 @@ export default function ActivitiesTab({ latest, previous, snapWeek, snapMonth }:
             }}>
               {group}
             </p>
-            <table className="osrs-table">
+            <div className="table-scroll"><table className="osrs-table">
               <thead>
                 <tr>
                   <th>Activity</th>
@@ -86,7 +86,7 @@ export default function ActivitiesTab({ latest, previous, snapWeek, snapMonth }:
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </div>
         )
       })}

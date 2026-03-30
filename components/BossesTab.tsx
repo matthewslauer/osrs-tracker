@@ -47,7 +47,7 @@ export default function BossesTab({ latest, previous, snapWeek, snapMonth }: Pro
             }}>
               {group}
             </p>
-            <table className="osrs-table">
+            <div className="table-scroll"><table className="osrs-table">
               <thead>
                 <tr>
                   <th>Boss</th>
@@ -70,7 +70,7 @@ export default function BossesTab({ latest, previous, snapWeek, snapMonth }: Pro
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </div>
         )
       })}

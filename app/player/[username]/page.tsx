@@ -84,9 +84,10 @@ export default function PlayerPage({ params }: { params: Promise<{ username: str
           borderRadius: 8,
           padding: '20px 24px',
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'flex-start',
           justifyContent: 'space-between',
           gap: 16,
+          flexWrap: 'wrap',
         }}>
           <div>
             <h1 className="font-runescape" style={{ fontSize: 24, color: 'var(--gold)', letterSpacing: '0.03em' }}>

@@ -164,3 +164,47 @@ body {
 .osrs-table .num { text-align: right; font-variant-numeric: tabular-nums; color: var(--gold-light); font-weight: 500; }
 .osrs-table .rank { color: var(--text-3); font-size: 11px; }
 .osrs-table .dim { color: var(--text-3); }
+
+/* Mobile */
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+@media (max-width: 640px) {
+  .osrs-table th, .osrs-table td { padding: 8px 8px; font-size: 12px; }
+
+  /* Player cards on dashboard instead of table */
+  .player-table-wrap { display: none; }
+  .player-cards { display: flex; flex-direction: column; gap: 1px; }
+
+  .player-card {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .player-card:last-child { border-bottom: none; }
+  .player-card-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gold);
+    text-decoration: none;
+  }
+  .player-card-stats {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .player-card-stat { display: flex; flex-direction: column; gap: 1px; }
+  .player-card-stat-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; }
+  .player-card-stat-value { font-size: 14px; font-weight: 600; color: var(--gold-light); }
+  .player-card-gains { display: flex; gap: 12px; flex-wrap: wrap; }
+  .player-card-gain { display: flex; flex-direction: column; gap: 1px; }
+  .player-card-gain-label { font-size: 10px; color: var(--text-3); }
+  .player-card-gain-value { font-size: 13px; font-weight: 600; }
+  .player-card-remove { align-self: flex-end; }
+}
+
+@media (min-width: 641px) {
+  .player-table-wrap { display: block; }
+  .player-cards { display: none; }
+}
