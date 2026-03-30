@@ -101,43 +101,43 @@ export default function PlayerPage({ params }: { params: Promise<{ username: str
           </div>
 
           {overall && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'flex-end' }}>
-              {[
-                { label: 'Total Level', value: overall.level.toLocaleString(), color: 'var(--gold-light)' },
-                { label: 'Total EXP', value: formatXP(overall.experience), color: 'var(--gold-light)' },
-                { label: 'Rank', value: overall.rank > 0 ? formatNumber(overall.rank) : '—', color: 'var(--text-2)' },
-                ...(totalBossKills > 0 ? [{ label: 'Boss KC', value: formatNumber(totalBossKills), color: 'var(--text-2)' }] : []),
-                ...(totalClues > 0 ? [{ label: 'Clues', value: formatNumber(totalClues), color: 'var(--text-2)' }] : []),
-              ].map((stat, i) => (
-                <div key={i} style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 11, color: 'var(--text-3)', marginBottom: 2 }}>{stat.label}</div>
-                  <div style={{ fontSize: 20, fontWeight: 700, color: stat.color, fontFamily: 'Cinzel, serif' }}>{stat.value}</div>
-                </div>
-              ))}
+            <div className="player-header-stats" style={{ display: 'flex', gap: 24, justifyContent: 'flex-end' }}>
+              <div className="player-header-stats-row" style={{ display: 'flex', gap: 24, justifyContent: 'flex-end' }}>
+                {[
+                  { label: 'Total Level', value: overall.level.toLocaleString(), color: 'var(--gold-light)' },
+                  { label: 'Total EXP', value: formatXP(overall.experience), color: 'var(--gold-light)' },
+                  { label: 'Rank', value: overall.rank > 0 ? formatNumber(overall.rank) : '—', color: 'var(--text-2)' },
+                  ...(totalBossKills > 0 ? [{ label: 'Boss KC', value: formatNumber(totalBossKills), color: 'var(--text-2)' }] : []),
+                  ...(totalClues > 0 ? [{ label: 'Clues', value: formatNumber(totalClues), color: 'var(--text-2)' }] : []),
+                ].map((stat, i) => (
+                  <div key={i} style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: 11, color: 'var(--text-3)', marginBottom: 2 }}>{stat.label}</div>
+                    <div style={{ fontSize: 20, fontWeight: 700, color: stat.color, fontFamily: 'Cinzel, serif' }}>{stat.value}</div>
+                  </div>
+                ))}
+              </div>
 
-              <>
-                <div style={{ width: 1, background: 'var(--border)', alignSelf: 'stretch' }} />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <div style={{ fontSize: 10, color: 'var(--gold-dim)', fontFamily: 'Cinzel, serif', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                    EXP Gained
-                  </div>
-                  <div style={{ display: 'flex', gap: 24 }}>
-                    {[
-                      { label: 'Last 24h', gain: gainDay },
-                      { label: 'Last 7d', gain: gainWeek },
-                      { label: 'Last 30d', gain: gainMonth },
-                    ].map(({ label, gain }) => (
-                      <div key={label} style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: 11, color: 'var(--text-3)', marginBottom: 2 }}>{label}</div>
-                        <div style={{ fontSize: 20, fontWeight: 700, fontFamily: 'Cinzel, serif',
-                          color: gain === 'no-data' || gain === null ? 'var(--text-3)' : gain > 0 ? '#6ab04c' : 'var(--text-2)' }}>
-                          {gain === 'no-data' || gain === null ? '—' : gain > 0 ? `+${formatXP(gain)}` : '+0'}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+              <div className="player-header-divider" style={{ width: 1, background: 'var(--border)', alignSelf: 'stretch' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div style={{ fontSize: 10, color: 'var(--gold-dim)', fontFamily: 'Cinzel, serif', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                  EXP Gained
                 </div>
-              </>
+                <div className="player-header-stats-row" style={{ display: 'flex', gap: 24 }}>
+                  {[
+                    { label: 'Last 24h', gain: gainDay },
+                    { label: 'Last 7d', gain: gainWeek },
+                    { label: 'Last 30d', gain: gainMonth },
+                  ].map(({ label, gain }) => (
+                    <div key={label} style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: 11, color: 'var(--text-3)', marginBottom: 2 }}>{label}</div>
+                      <div style={{ fontSize: 20, fontWeight: 700, fontFamily: 'Cinzel, serif',
+                        color: gain === 'no-data' || gain === null ? 'var(--text-3)' : gain > 0 ? '#6ab04c' : 'var(--text-2)' }}>
+                        {gain === 'no-data' || gain === null ? '—' : gain > 0 ? `+${formatXP(gain)}` : '+0'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </div>

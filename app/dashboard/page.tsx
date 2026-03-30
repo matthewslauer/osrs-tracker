@@ -206,7 +206,7 @@ export default function DashboardPage() {
                       <Link href={`/player/${player.username}`} className="player-card-name">
                         {player.display_name || player.username}
                       </Link>
-                      <button className="btn-danger player-card-remove" onClick={() => removePlayer(player.id)}>Remove</button>
+                      <button className="player-card-remove" onClick={() => removePlayer(player.id)} title="Remove">×</button>
                     </div>
                     <div className="player-card-stats">
                       <div className="player-card-stat">

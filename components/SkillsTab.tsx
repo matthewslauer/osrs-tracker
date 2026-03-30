@@ -89,6 +89,7 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
       {skills.overall && (
         <button
           onClick={() => setSelectedSkill('overall')}
+          className="skills-total-btn"
           style={{
             width: '100%',
             background: selectedSkill === 'overall' ? 'var(--surface3)' : 'var(--surface2)',
@@ -102,11 +103,11 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
             cursor: 'pointer',
             transition: 'border-color 0.12s, background 0.12s',
           }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 60 }}>
             <img src={SKILL_ICONS.overall} alt="overall" width={18} height={18} onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }} />
             <span style={{ fontFamily: 'Cinzel, serif', fontSize: 12, color: 'var(--gold)', letterSpacing: '0.05em' }}>Total</span>
           </div>
-          <div style={{ display: 'flex', gap: 32 }}>
+          <div className="skills-total-stats" style={{ display: 'flex', gap: 32 }}>
             <div style={{ textAlign: 'right' }}>
               <div style={{ fontSize: 11, color: 'var(--text-3)' }}>Level</div>
               <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--gold-light)' }}>{skills.overall.level.toLocaleString()}</div>

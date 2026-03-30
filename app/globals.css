@@ -176,32 +176,48 @@ body {
   .player-cards { display: flex; flex-direction: column; gap: 1px; }
 
   .player-card {
-    padding: 14px 16px;
+    padding: 12px 16px;
     border-bottom: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
   .player-card:last-child { border-bottom: none; }
   .player-card-name {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--gold);
     text-decoration: none;
   }
   .player-card-stats {
     display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
+    gap: 20px;
   }
   .player-card-stat { display: flex; flex-direction: column; gap: 1px; }
   .player-card-stat-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; }
-  .player-card-stat-value { font-size: 14px; font-weight: 600; color: var(--gold-light); }
-  .player-card-gains { display: flex; gap: 12px; flex-wrap: wrap; }
+  .player-card-stat-value { font-size: 15px; font-weight: 600; color: var(--gold-light); }
+  .player-card-gains { display: flex; gap: 20px; }
   .player-card-gain { display: flex; flex-direction: column; gap: 1px; }
-  .player-card-gain-label { font-size: 10px; color: var(--text-3); }
-  .player-card-gain-value { font-size: 13px; font-weight: 600; }
-  .player-card-remove { align-self: flex-end; }
+  .player-card-gain-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; }
+  .player-card-gain-value { font-size: 15px; font-weight: 600; }
+  .player-card-remove {
+    background: none;
+    border: none;
+    color: var(--error);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+  }
+
+  /* Player page header */
+  .player-header-stats { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+  .player-header-stats-row { flex-wrap: wrap; gap: 16px !important; justify-content: flex-start !important; }
+  .player-header-divider { display: none !important; }
+
+  /* Skills total row */
+  .skills-total-btn { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+  .skills-total-stats { gap: 16px !important; }
 }
 
 @media (min-width: 641px) {
