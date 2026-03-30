@@ -186,7 +186,7 @@ export default function DashboardPage() {
                         <td className="num">{renderGain(xpGainSince(sorted, 7))}</td>
                         <td className="num">{renderGain(xpGainSince(sorted, 30))}</td>
                         <td style={{ textAlign: 'right' }}>
-                          <button className="btn-danger" onClick={() => removePlayer(player.id)}>Remove</button>
+                          <button className="btn-danger" onClick={() => removePlayer(player.id)} title="Remove" style={{ fontSize: 18, padding: '2px 8px' }}>×</button>
                         </td>
                       </tr>
                     )
