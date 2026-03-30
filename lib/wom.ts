@@ -85,3 +85,38 @@ export function formatNumber(n: number): string {
 export function skillLabel(metric: string): string {
   return metric.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
 }
+
+// XP table: index 0 = XP needed for level 1 (0), index 125 = XP for level 126
+export const XP_TABLE: number[] = (() => {
+  const table = [0]
+  let points = 0
+  for (let level = 1; level <= 126; level++) {
+    points += Math.floor(level + 300 * Math.pow(2, level / 7))
+    table.push(Math.floor(points / 4))
+  }
+  return table
+})()
+
+export function getVirtualLevel(xp: number): number {
+  let level = 1
+  for (let i = 1; i < XP_TABLE.length; i++) {
+    if (XP_TABLE[i] > xp) break
+    level = i + 1
+  }
+  return Math.min(level, 126)
+}
+
+export function getLevelProgress(xp: number): {
+  level: number
+  virtualLevel: number
+  progressPct: number
+  xpToNext: number | null
+} {
+  const virtualLevel = getVirtualLevel(xp)
+  const level = Math.min(virtualLevel, 99)
+  if (virtualLevel >= 126) return { level, virtualLevel, progressPct: 1, xpToNext: null }
+  const xpCurrent = XP_TABLE[virtualLevel - 1]
+  const xpNext = XP_TABLE[virtualLevel]
+  const progressPct = (xp - xpCurrent) / (xpNext - xpCurrent)
+  return { level, virtualLevel, progressPct, xpToNext: xpNext - xp }
+}
