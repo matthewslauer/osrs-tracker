@@ -74,7 +74,7 @@ export default function PlayerPage({ params }: { params: Promise<{ username: str
     const melee = 0.325 * (attack + strength)
     const rangedContrib = 0.325 * Math.floor(ranged * 1.5)
     const magicContrib = 0.325 * Math.floor(magic * 1.5)
-    return Math.floor(base + Math.max(melee, rangedContrib, magicContrib))
+    return Math.round((base + Math.max(melee, rangedContrib, magicContrib)) * 10) / 10
   }
 
   const combatLevel = calcCombatLevel()
@@ -124,7 +124,7 @@ export default function PlayerPage({ params }: { params: Promise<{ username: str
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <div className="player-header-stats-row" style={{ display: 'flex', gap: 24 }}>
                   {[
-                    ...(combatLevel !== null ? [{ label: 'Combat', value: combatLevel.toString(), color: 'var(--gold-light)' }] : []),
+                    ...(combatLevel !== null ? [{ label: 'Combat', value: combatLevel.toFixed(1), color: 'var(--gold-light)' }] : []),
                     { label: 'Total Level', value: overall.level.toLocaleString(), color: 'var(--gold-light)' },
                     { label: 'Total EXP', value: formatXP(overall.experience), color: 'var(--gold-light)' },
                     { label: 'Rank', value: overall.rank > 0 ? formatNumber(overall.rank) : '—', color: 'var(--text-2)' },

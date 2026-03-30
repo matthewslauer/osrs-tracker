@@ -83,7 +83,7 @@ export default function DashboardPage() {
     const melee = 0.325 * (attack + strength)
     const rangedContrib = 0.325 * Math.floor(ranged * 1.5)
     const magicContrib = 0.325 * Math.floor(magic * 1.5)
-    return Math.floor(base + Math.max(melee, rangedContrib, magicContrib))
+    return Math.round((base + Math.max(melee, rangedContrib, magicContrib)) * 10) / 10
   }
 
   function getSortedSnapshots(player: PlayerWithSnapshot) {
@@ -199,7 +199,7 @@ export default function DashboardPage() {
                             {player.display_name || player.username}
                           </Link>
                         </td>
-                        <td className="num">{calcCombatLevel(snap) ?? '—'}</td>
+                        <td className="num">{calcCombatLevel(snap)?.toFixed(1) ?? '—'}</td>
                         <td className="num">{overall ? overall.level.toLocaleString() : '—'}</td>
                         <td className="num">{overall ? formatXP(overall.experience) : '—'}</td>
                         <td className="num">{renderGain(xpGainSince(sorted, 1))}</td>
@@ -231,7 +231,7 @@ export default function DashboardPage() {
                     <div className="player-card-stats">
                       <div className="player-card-stat">
                         <span className="player-card-stat-label">Combat</span>
-                        <span className="player-card-stat-value">{calcCombatLevel(sorted[0] ?? null) ?? '—'}</span>
+                        <span className="player-card-stat-value">{calcCombatLevel(sorted[0] ?? null)?.toFixed(1) ?? '—'}</span>
                       </div>
                       <div className="player-card-stat">
                         <span className="player-card-stat-label">Level</span>
