@@ -11,7 +11,7 @@ interface Props {
   snapshots: Snapshot[]
 }
 
-const MILESTONE_THRESHOLD = 50_000 // show "X to go" when within 50k XP of next level
+const MILESTONE_THRESHOLD = 50_000 // highlight border when within 50k XP of next level
 
 export default function SkillsTab({ latest, previous, snapshots }: Props) {
   const [selectedSkill, setSelectedSkill] = useState<string>('overall')
@@ -109,9 +109,9 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
                 <span style={{ fontSize: 10, color: '#6ab04c' }}>+{formatXP(gain)} exp</span>
               )}
 
-              {isMilestone && xpToNext !== null && (
-                <span style={{ fontSize: 10, color: 'var(--gold-dim)' }}>
-                  {formatNumber(xpToNext)} to level
+              {xpToNext !== null && (
+                <span style={{ fontSize: 10, color: isMilestone ? 'var(--gold)' : 'var(--text-3)' }}>
+                  {formatXP(xpToNext)} to level
                 </span>
               )}
 
