@@ -33,18 +33,15 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
           <span style={{ fontSize: 13, color: 'var(--gold)', fontFamily: 'Cinzel, serif', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             {skillLabel(selectedSkill)} — EXP Over Time
           </span>
-          <button
-            onClick={() => setShowVirtual(v => !v)}
-            style={{
-              fontSize: 11, padding: '4px 10px',
-              background: showVirtual ? 'var(--surface3)' : 'transparent',
-              border: `1px solid ${showVirtual ? 'var(--gold-dim)' : 'var(--border)'}`,
-              borderRadius: 4, color: showVirtual ? 'var(--gold)' : 'var(--text-3)',
-              cursor: 'pointer', whiteSpace: 'nowrap',
-            }}
-          >
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', fontSize: 11, color: 'var(--text-3)', userSelect: 'none' }}>
+            <input
+              type="checkbox"
+              checked={showVirtual}
+              onChange={e => setShowVirtual(e.target.checked)}
+              style={{ accentColor: 'var(--gold)', cursor: 'pointer' }}
+            />
             Virtual levels
-          </button>
+          </label>
         </div>
         <XPChart snapshots={snapshots} skill={selectedSkill} />
       </div>
