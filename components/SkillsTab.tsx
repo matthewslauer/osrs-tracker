@@ -117,10 +117,7 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
               </div>
 
               {/* Fixed-height info row — always takes same space */}
-              <div style={{ height: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-                <span style={{ fontSize: 10, color: '#6ab04c' }}>
-                  {gain > 0 ? `+${formatXP(gain)} (24h)` : ''}
-                </span>
+              <div style={{ height: 16, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}>
                 {showXpToLevel && (
                   <span style={{ fontSize: 10, color: isMilestone ? 'var(--gold)' : 'var(--text-3)' }}>
                     {formatXP(xpToNext!)} to lvl
