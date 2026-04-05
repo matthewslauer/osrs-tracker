@@ -158,15 +158,15 @@ export default function SkillsTab({ latest, snapshots }: Props) {
                 </span>
               </div>
 
-              <div style={{ height: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+              <div style={{ height: 14, display: 'flex', alignItems: 'center', marginBottom: 2 }}>
                 <span style={{ fontSize: 10, color: '#6ab04c' }}>
                   {gain > 0 ? `+${formatXP(gain)}` : ''}
                 </span>
-                {showXpToLevel && (
-                  <span style={{ fontSize: 10, color: isMilestone ? 'var(--gold)' : 'var(--text-3)' }}>
-                    {formatXP(xpToNext!)} to lvl
-                  </span>
-                )}
+              </div>
+              <div style={{ height: 14, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}>
+                <span style={{ fontSize: 10, color: isMilestone ? 'var(--gold)' : 'var(--text-3)' }}>
+                  {showXpToLevel ? `${formatXP(xpToNext!)} to lvl` : ''}
+                </span>
               </div>
 
               <div style={{ height: 3, background: 'var(--border)', marginLeft: -10, marginRight: -10 }}>
