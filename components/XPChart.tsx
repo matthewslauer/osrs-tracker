@@ -99,7 +99,6 @@ export default function XPChart({ snapshots, skill }: Props) {
           />
         </LineChart>
       </ResponsiveContainer>
-      </div>
     </div>
   )
 }
