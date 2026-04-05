@@ -28,6 +28,13 @@ export default function XPChart({ snapshots, skill }: Props) {
     )
   }
 
+  const xpValues = data.map(d => d.xp)
+  const minXp = Math.min(...xpValues)
+  const maxXp = Math.max(...xpValues)
+  const padding = (maxXp - minXp) * 0.05
+  const yMin = Math.floor((minXp - padding) / 1000) * 1000
+  const yMax = Math.ceil((maxXp + padding) / 1000) * 1000
+
   return (
     <div style={{ background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: 6, padding: '16px 8px 8px' }}>
       <ResponsiveContainer width="100%" height={200}>
@@ -45,6 +52,7 @@ export default function XPChart({ snapshots, skill }: Props) {
             axisLine={false}
             tickLine={false}
             width={60}
+            domain={[yMin, yMax]}
           />
           <Tooltip
             contentStyle={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 4, fontSize: 12 }}
