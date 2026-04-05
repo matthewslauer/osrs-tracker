@@ -1,49 +1,94 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Snapshot } from '@/types'
 import { SKILLS, SKILL_ICONS, formatXP, formatNumber, skillLabel, getLevelProgress } from '@/lib/wom'
 import XPChart from './XPChart'
 
 interface Props {
   latest: Snapshot
-  previous?: Snapshot
   snapshots: Snapshot[]
 }
 
-const MILESTONE_PCT = 0.9 // highlight when >= 90% to next level
+const MILESTONE_PCT = 0.9
 
-export default function SkillsTab({ latest, previous, snapshots }: Props) {
+const GAIN_PERIODS = [
+  { label: '1D', days: 1 },
+  { label: '7D', days: 7 },
+  { label: '30D', days: 30 },
+]
+
+export default function SkillsTab({ latest, snapshots }: Props) {
   const [selectedSkill, setSelectedSkill] = useState<string>('overall')
   const [showVirtual, setShowVirtual] = useState(false)
+  const [gainPeriod, setGainPeriod] = useState(1)
   const skills = latest.data.data.skills
 
-  // Calculate max gain across all skills for heatmap normalization
-  const allGains = SKILLS.filter(s => s !== 'overall').map(skill => {
-    const s = skills[skill]
-    const prev = previous?.data.data.skills[skill]
-    return (s && prev) ? Math.max(0, s.experience - prev.experience) : 0
-  })
-  const maxGain = Math.max(...allGains, 1)
+  // Find comparison snapshot for selected gain period
+  const compareSnapshot = useMemo(() => {
+    const sorted = [...snapshots].sort((a, b) =>
+      new Date(b.taken_at).getTime() - new Date(a.taken_at).getTime()
+    )
+    const target = Date.now() - gainPeriod * 24 * 60 * 60 * 1000
+    return sorted.slice(1).reduce<Snapshot | null>((best, s) => {
+      const t = new Date(s.taken_at).getTime()
+      if (!best) return s
+      return Math.abs(t - target) < Math.abs(new Date(best.taken_at).getTime() - target) ? s : best
+    }, null)
+  }, [snapshots, gainPeriod])
+
+  // Heatmap normalization
+  const maxGain = useMemo(() => {
+    const gains = SKILLS.filter(s => s !== 'overall').map(skill => {
+      const s = skills[skill]
+      const prev = compareSnapshot?.data.data.skills[skill]
+      return (s && prev) ? Math.max(0, s.experience - prev.experience) : 0
+    })
+    return Math.max(...gains, 1)
+  }, [skills, compareSnapshot])
 
   return (
     <div>
-      <div style={{ marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+      {/* Chart */}
+      <div style={{ marginBottom: 8 }}>
+        <div style={{ marginBottom: 8 }}>
           <span style={{ fontSize: 13, color: 'var(--gold)', fontFamily: 'Cinzel, serif', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             {skillLabel(selectedSkill)} — EXP Over Time
           </span>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', fontSize: 11, color: 'var(--text-3)', userSelect: 'none' }}>
-            <input
-              type="checkbox"
-              checked={showVirtual}
-              onChange={e => setShowVirtual(e.target.checked)}
-              style={{ accentColor: 'var(--gold)', cursor: 'pointer' }}
-            />
-            Virtual levels
-          </label>
         </div>
         <XPChart snapshots={snapshots} skill={selectedSkill} />
+      </div>
+
+      {/* Controls row below chart */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ fontSize: 11, color: 'var(--text-3)' }}>EXP Gains:</span>
+          {GAIN_PERIODS.map(p => (
+            <button
+              key={p.label}
+              onClick={() => setGainPeriod(p.days)}
+              style={{
+                fontSize: 11, padding: '3px 10px',
+                background: gainPeriod === p.days ? 'var(--surface3)' : 'transparent',
+                border: `1px solid ${gainPeriod === p.days ? 'var(--gold-dim)' : 'var(--border)'}`,
+                borderRadius: 4,
+                color: gainPeriod === p.days ? 'var(--gold)' : 'var(--text-3)',
+                cursor: 'pointer',
+              }}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', fontSize: 11, color: 'var(--text-3)', userSelect: 'none' }}>
+          <input
+            type="checkbox"
+            checked={showVirtual}
+            onChange={e => setShowVirtual(e.target.checked)}
+            style={{ accentColor: 'var(--gold)', cursor: 'pointer' }}
+          />
+          Virtual levels
+        </label>
       </div>
 
       {/* Skill grid */}
@@ -53,10 +98,10 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
         gap: 6,
         marginBottom: 16,
       }}>
-        {SKILLS.filter(s => s !== 'overall').map((skill, idx) => {
+        {SKILLS.filter(s => s !== 'overall').map(skill => {
           const s = skills[skill]
           if (!s) return null
-          const prev = previous?.data.data.skills[skill]
+          const prev = compareSnapshot?.data.data.skills[skill]
           const gain = prev ? Math.max(0, s.experience - prev.experience) : 0
           const isSelected = selectedSkill === skill
           const heat = gain / maxGain
@@ -65,7 +110,6 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
           const isMaxed = virtualLevel >= 99
           const showXpToLevel = xpToNext !== null && (virtualLevel < 99 || showVirtual)
 
-          // Heatmap: warm gold tint scaled by relative gain
           const heatBg = heat > 0
             ? `linear-gradient(135deg, rgba(200,155,60,${heat * 0.18}) 0%, var(--surface2) 100%)`
             : undefined
@@ -87,7 +131,6 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
                 overflow: 'hidden',
               }}
             >
-              {/* Top: icon + name */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
                 <img
                   src={SKILL_ICONS[skill]}
@@ -101,7 +144,6 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
                 </span>
               </div>
 
-              {/* Level + EXP */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 }}>
                 <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--gold-light)', fontVariantNumeric: 'tabular-nums' }}>
                   {isMaxed ? 99 : virtualLevel}
@@ -116,8 +158,10 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
                 </span>
               </div>
 
-              {/* Fixed-height info row — always takes same space */}
-              <div style={{ height: 16, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}>
+              <div style={{ height: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                <span style={{ fontSize: 10, color: '#6ab04c' }}>
+                  {gain > 0 ? `+${formatXP(gain)}` : ''}
+                </span>
                 {showXpToLevel && (
                   <span style={{ fontSize: 10, color: isMilestone ? 'var(--gold)' : 'var(--text-3)' }}>
                     {formatXP(xpToNext!)} to lvl
@@ -125,7 +169,6 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
                 )}
               </div>
 
-              {/* Progress bar — always at bottom */}
               <div style={{ height: 3, background: 'var(--border)', marginLeft: -10, marginRight: -10 }}>
                 <div style={{
                   height: '100%',

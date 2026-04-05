@@ -191,7 +191,7 @@ export default function PlayerPage({ params }: { params: Promise<{ username: str
               ))}
             </div>
             <div style={{ padding: 16 }}>
-              {tab === 'skills' && <SkillsTab latest={latest} previous={previous} snapshots={snapshots} />}
+              {tab === 'skills' && <SkillsTab latest={latest} snapshots={snapshots} />}
               {tab === 'bosses' && <BossesTab latest={latest} previous={previous} snapWeek={snapWeek} snapMonth={snapMonth} />}
               {tab === 'activities' && <ActivitiesTab latest={latest} previous={previous} snapWeek={snapWeek} snapMonth={snapMonth} />}
             </div>
