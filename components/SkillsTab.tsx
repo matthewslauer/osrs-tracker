@@ -85,14 +85,13 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 4,
                 textAlign: 'left',
                 transition: 'border-color 0.12s, background 0.12s',
                 overflow: 'hidden',
-                position: 'relative',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              {/* Top: icon + name */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
                 <img
                   src={SKILL_ICONS[skill]}
                   alt={skill}
@@ -105,7 +104,8 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
                 </span>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+              {/* Level + EXP */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 4 }}>
                 <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--gold-light)', fontVariantNumeric: 'tabular-nums' }}>
                   {isMaxed ? 99 : virtualLevel}
                   {showVirtual && virtualLevel > 99 && (
@@ -119,23 +119,24 @@ export default function SkillsTab({ latest, previous, snapshots }: Props) {
                 </span>
               </div>
 
-              {gain > 0 && (
-                <span style={{ fontSize: 10, color: '#6ab04c' }}>+{formatXP(gain)} exp</span>
-              )}
-
-              {showXpToLevel && (
-                <span style={{ fontSize: 10, color: isMilestone ? 'var(--gold)' : 'var(--text-3)' }}>
-                  {formatXP(xpToNext!)} to level
+              {/* Fixed-height info row — always takes same space */}
+              <div style={{ height: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                <span style={{ fontSize: 10, color: '#6ab04c' }}>
+                  {gain > 0 ? `+${formatXP(gain)} (24h)` : ''}
                 </span>
-              )}
+                {showXpToLevel && (
+                  <span style={{ fontSize: 10, color: isMilestone ? 'var(--gold)' : 'var(--text-3)' }}>
+                    {formatXP(xpToNext!)} to lvl
+                  </span>
+                )}
+              </div>
 
-              {/* Progress bar */}
-              <div style={{ marginTop: 6, height: 3, background: 'var(--border)', borderRadius: 0, marginLeft: -10, marginRight: -10 }}>
+              {/* Progress bar — always at bottom */}
+              <div style={{ height: 3, background: 'var(--border)', marginLeft: -10, marginRight: -10 }}>
                 <div style={{
                   height: '100%',
                   width: `${Math.min(progressPct * 100, 100)}%`,
                   background: isMilestone ? '#c89b3c' : virtualLevel >= 99 ? '#6ab04c' : 'var(--gold-dim)',
-                  borderRadius: 0,
                   transition: 'width 0.3s ease',
                 }} />
               </div>
