@@ -122,13 +122,14 @@ export default function SkillsTab({ latest, snapshots }: Props) {
                 background: isSelected ? 'var(--surface3)' : heatBg ?? 'var(--surface2)',
                 border: `1px solid ${isSelected ? 'var(--gold)' : isMilestone ? 'rgba(200,155,60,0.5)' : 'var(--border)'}`,
                 borderRadius: 6,
-                padding: '10px 10px 0',
+                padding: '10px 10px 7px',
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
                 textAlign: 'left',
                 transition: 'border-color 0.12s, background 0.12s',
                 overflow: 'hidden',
+                position: 'relative',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
@@ -169,7 +170,7 @@ export default function SkillsTab({ latest, snapshots }: Props) {
                 </span>
               </div>
 
-              <div style={{ height: 3, background: 'var(--border)', marginLeft: -10, marginRight: -10 }}>
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 3, background: 'var(--border)' }}>
                 <div style={{
                   height: '100%',
                   width: `${Math.min(progressPct * 100, 100)}%`,
